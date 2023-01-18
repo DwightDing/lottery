@@ -1,0 +1,69 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+.root {
+    height: 100%;
+    width: 100%;
+    background-color: #a03b1c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.header {
+    width: 100%;
+    height: 30%;
+    color: #fff;
+    text-align: center;
+    animation: bounce 0.75s cubic-bezier(0.05, 0, 0.2, 1) infinite alternate;
+}
+
+.container {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.number {
+    flex: 1;
+    background-color: white;
+    border-radius: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.singlenumber {
+    width: 30%;
+    height: 80%;
+    background-color: rgba(178, 93, 13, 0.355);
+    border-radius: 60px;
+    display: flex;
+    flex-direction: row;
+    font-size: 200px;
+    text-align: cenlogoter;
+    justify-content: center;
+    align-items: center;
+}
+
+.boy {
+    height: 100%;
+}
+
+.girl {
+    height: 100%;
+}
+
+.footer {
+    flex: 1;
+    padding-top: 26px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
