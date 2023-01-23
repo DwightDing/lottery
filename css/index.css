@@ -52,6 +52,26 @@ html {
     align-items: center;
 }
 
+.number-window {
+    width: 100%;
+    height: 80%;
+    position: relative;
+    overflow: hidden;
+}
+
+.number-window > .number-list {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.number-list > .num {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
 .boy {
     height: 100%;
 }
