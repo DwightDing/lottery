@@ -14,7 +14,7 @@
 <body class="root">
 
     <div class="header">
-        <img src="./img/title.png" style="height: 100%;">
+        <img style="width: 60%;" src="./img/title.png">
     </div>
 
     <div class="container" onclick="lottery()">
@@ -27,8 +27,8 @@
         <img class="girl" src="./img/IMG_6237.PNG" />
     </div>
     <div class="footer">
-        <div style="font-size: 36px;color:white;text-align: center;">中奖名单</div>
-        <div style="width: 100%;font-size: 20px;color:white;text-align: center;" id="list"></div>
+        <div style="font-size: 6vw;color:#CB0044;text-align: center;font-family: mitao;">中奖名单</div>
+        <marquee style="width: 100%;font-size: 4vw;color:#CB0044;text-align: center;font-family: mitao;" id="list"></marquee>
     </div>
 
     <script>
@@ -38,7 +38,11 @@
             if (data == null) {
                 data = [];
             }
-            document.getElementById('list').innerHTML = data;
+            let innerHtml = '';
+            data.forEach(element => {
+                innerHtml += `NO.${element} 💗 `
+            });
+            document.getElementById('list').innerHTML = innerHtml;
         }
     </script>
 </body>

@@ -8,7 +8,7 @@ function lottery() {
         idle = false;
         let number = document.getElementById("number");
         timer = setInterval(() => {
-            curIndex = parseInt((Math.random() * 1000) % numberArr.length);
+            curIndex = parseInt((Math.random() * numberArr.length * 100) % numberArr.length);
             let curNum = numberArr[curIndex];
             number.innerHTML = `<div class="singlenumber">${curNum[0]}</div>
             <div class="singlenumber">${curNum[1]}</div>

@@ -2,27 +2,38 @@ html {
     height: 100%;
     width: 100%;
 }
+
+@font-face {
+    font-family: mitao;
+    src: url(./mitao.ttf);
+}
 .root {
     height: 100%;
     width: 100%;
-    background-color: #a03b1c;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 0;
+    background-image: url("../img/bg.png");
+    background-size:100% 100%;
 }
 
 .header {
     width: 100%;
     height: 30%;
+    display: flex;
     color: #fff;
-    text-align: center;
-    animation: bounce 0.75s cubic-bezier(0.05, 0, 0.2, 1) infinite alternate;
+    align-items: center;
+    justify-content: center;
+    font-family: mitao;
+    font-size: 200px;
 }
 
 .container {
-    width: 100%;
+    margin-left: 6vw;
+    width: 80%;
     height: 50%;
     display: flex;
     flex-direction: row;
@@ -31,38 +42,47 @@ html {
 
 .number {
     flex: 1;
-    background-color: white;
-    border-radius: 60px;
+    height: 38vw;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    background-image: url("../img/heart.png");
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
+    background-size:100% 100%;
 }
 
 .singlenumber {
-    width: 30%;
-    height: 80%;
-    background-color: rgba(178, 93, 13, 0.355);
-    border-radius: 60px;
+    margin-top: -6vw;
+    width: 10vw;
+    height: 16vw;
+    background-color: rgb(255, 255, 255);
+    border-radius: 2vw;
     display: flex;
     flex-direction: row;
-    font-size: 200px;
+    font-size: 10vw;
+    font-family: mitao;
     text-align: cenlogoter;
     justify-content: center;
     align-items: center;
+    color: #CB0044;
 }
 
 .boy {
-    height: 100%;
+    height: 80%;
 }
 
 .girl {
+    height: 80%;
+}
+
+.button {
     height: 100%;
 }
 
 .footer {
     flex: 1;
-    padding-top: 26px;
     width: 100%;
     display: flex;
     flex-direction: column;
