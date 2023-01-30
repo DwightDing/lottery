@@ -27,3 +27,14 @@ function lottery() {
         showlist();
     }
 }
+
+function setElementOffset(el, {x, y}) {
+    if(el) {
+        if(x !== undefined) {
+            el.style.left = `${x}px`
+        }
+        if(y !== undefined) {
+            el.style.top = `-${y}px`
+        }
+    }
+}

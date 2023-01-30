@@ -11,21 +11,21 @@
     <script src="./js/lottery.js"></script>
 </head>
 
-<body class="root">
-
+<body style="width: 100%; height: 100%;">
+<div class="root" id="container">
     <div class="header">
         <img src="./img/title.png" style="height: 100%;">
     </div>
 
-    <div class="container" onclick="lottery()">
+    <div class="container">
         <img class="boy" src="./img/IMG_6236.PNG" />
         <div class="number" id="number">
             <!-- <div class="singlenumber">接</div>
             <div class="singlenumber">好</div>
             <div class="singlenumber">运</div> -->
             <div class="singlenumber">
-                <div class="number-window">
-                    <div class="number-list">
+                <div class="number-window" id="number-window">
+                    <div class="number-list" id="number-list">
                         <div class="num">0</div>
                         <div class="num">1</div>
                         <div class="num">2</div>
@@ -41,8 +41,115 @@
         <div style="font-size: 36px;color:white;text-align: center;">中奖名单</div>
         <div style="width: 100%;font-size: 20px;color:white;text-align: center;" id="list"></div>
     </div>
+</div>
 
     <script>
+        window.addEventListener('load', onLoad)
+        window.addEventListener('unload', onUnload)
+        function onLoad() {
+            const container = document.getElementById('container')
+            container.addEventListener('mousedown', onMouseDown)
+            // load 接好运 三个字
+        }
+        function onUnload() {
+            const container = document.getElementById('container')
+            container.removeEventListener('mousedown', onMouseDown)
+        }
+
+        // 取元素
+        const list = document.getElementById('number-list')
+        const numberWindow = document.getElementById('number-window')
+
+
+        let run = false // 动画是否开始
+        let animation = null
+
+        function onMouseDown() {
+            console.log('mouse down', run)
+            run = !run
+
+            if(run) {
+                startAnimation()
+            }
+
+            
+        }
+
+        function buildNumberListDomByArray(array) {
+            return array.reduce((prev, current) => {
+                return prev + ('<div class="num">' + current + '</div>')
+            }, '')
+        }
+
+        function reverseList(array) {
+            const cloneArray = [...array]
+            const last = cloneArray.pop()
+            const reversed = [last, ...cloneArray]
+            return reversed
+        }
+
+        function loopNumberList() {
+            const listContainerEle = document.getElementById('number-list')
+            const childNodes = list.children
+            const currentListArray = []
+            for(let i = 0; i < childNodes.length; i++) {
+                currentListArray.push(parseInt(childNodes.item(i).innerHTML))
+            }
+            const newArray = reverseList(currentListArray)
+            listContainerEle.innerHTML = buildNumberListDomByArray(newArray)
+        }
+
+        const CYCLE_TIME = 0.5 // 0.5s滚完一个周期
+        const SLOW_CYCLE = 2
+
+        function startAnimation() {
+            const elHeight = list.offsetHeight
+            const windowHeight = numberWindow.offsetHeight
+            const diff = list.offsetHeight - numberWindow.offsetHeight
+            
+
+            let  previousTimeStamp;
+
+            function step(timestamp) {
+                if (previousTimeStamp === undefined) {
+                    previousTimeStamp = timestamp;
+                }
+
+                if(previousTimeStamp !== timestamp) {
+                    const elapsed = timestamp - previousTimeStamp;
+                    let granularity = diff / (CYCLE_TIME*1000);
+                    if(!run) {
+                        granularity = diff / (SLOW_CYCLE*1000)
+                    }
+                    if(Math.abs(list.offsetTop) > diff) {
+                        console.log('run:', Math.abs(list.offsetTop) - diff)
+                        if(run) {
+                            const moveDiff = windowHeight - list.offsetTop - list.offsetHeight
+                            setElementOffset(list, {y: 0})
+                            loopNumberList()
+                        }
+                        
+                    } else {
+                        const move = Math.floor(granularity * elapsed)
+                        const totalTop = -list.offsetTop + move
+                        console.log('move:', totalTop)
+                        setElementOffset(list, {y: totalTop})
+                    }
+
+                    
+                }
+
+                previousTimeStamp = timestamp
+
+                if(run || (!run && Math.abs(list.offsetTop) < diff)) {
+                    animation = window.requestAnimationFrame(step)
+                }
+            
+            }
+            animation = window.requestAnimationFrame(step)
+        }
+        
+
         showlist()
         function showlist() {
             let data = JSON.parse(localStorage.getItem("luckynum"));
@@ -51,6 +158,10 @@
             }
             document.getElementById('list').innerHTML = data;
         }
+
+        
+
+
 
         
     </script>
