@@ -24,13 +24,43 @@
             <div class="singlenumber">好</div>
             <div class="singlenumber">运</div> -->
             <div class="singlenumber">
-                <div class="number-window" id="number-window">
-                    <div class="number-list" id="number-list">
+                <div class="number-window" id="number-window-1">
+                    <div class="number-list" id="number-list-1">
                         <div class="num">0</div>
                         <div class="num">1</div>
                         <div class="num">2</div>
                         <div class="num">3</div>
                         <div class="num">5</div>
+                    </div>
+                </div>
+            </div>
+            <div class="singlenumber">
+                <div class="number-window" id="number-window-2">
+                    <div class="number-list" id="number-list-2">
+                        <div class="num">0</div>
+                        <div class="num">1</div>
+                        <div class="num">2</div>
+                        <div class="num">3</div>
+                        <div class="num">5</div>
+                        <div class="num">6</div>
+                        <div class="num">7</div>
+                        <div class="num">8</div>
+                        <div class="num">9</div>
+                    </div>
+                </div>
+            </div>
+            <div class="singlenumber">
+                <div class="number-window" id="number-window-3">
+                    <div class="number-list" id="number-list-3">
+                        <div class="num">0</div>
+                        <div class="num">1</div>
+                        <div class="num">2</div>
+                        <div class="num">3</div>
+                        <div class="num">5</div>
+                        <div class="num">6</div>
+                        <div class="num">7</div>
+                        <div class="num">8</div>
+                        <div class="num">9</div>
                     </div>
                 </div>
             </div>
@@ -56,16 +86,14 @@
             container.removeEventListener('mousedown', onMouseDown)
         }
 
-        // 取元素
-        const list = document.getElementById('number-list')
-        const numberWindow = document.getElementById('number-window')
+        
 
 
         let run = false // 动画是否开始
         let animation = null
 
         function onMouseDown() {
-            console.log('mouse down', run)
+            // console.log('mouse down', run)
             run = !run
 
             if(run) {
@@ -88,25 +116,76 @@
             return reversed
         }
 
-        function loopNumberList() {
-            const listContainerEle = document.getElementById('number-list')
-            const childNodes = list.children
+        function loopNumberList(el, last) {
+            const listNodes = el.children
             const currentListArray = []
-            for(let i = 0; i < childNodes.length; i++) {
-                currentListArray.push(parseInt(childNodes.item(i).innerHTML))
+            for(let i = 0; i < listNodes.length; i++) {
+                currentListArray.push(parseInt(listNodes.item(i).innerHTML))
             }
-            const newArray = reverseList(currentListArray)
-            listContainerEle.innerHTML = buildNumberListDomByArray(newArray)
+
+            let newArray
+            if(last !== undefined) {
+                let reversed = reverseList(currentListArray)
+                while((tmp = reversed.pop()) !== last) {
+                    resersed = reverseList([...reversed, tmp])
+                }
+                newArray = [...reversed, tmp]
+            } else {
+                newArray = reverseList(currentListArray)
+            }
+            el.innerHTML = buildNumberListDomByArray(newArray)
         }
 
         const CYCLE_TIME = 0.5 // 0.5s滚完一个周期
         const SLOW_CYCLE = 2
 
-        function startAnimation() {
+        const lotteryNumber_1 = 3
+        const lotteryNumber_2 = 6
+        const lotteryNumber_3 = 5
+
+        const stopFlag = new Array(0).fill(false)
+
+        function rollup(serial, stopAt, elapsed) {  // serial = 1,2,3  elapsed 时间差  stopAt 最后停在哪个数字
+            const list = document.getElementById('number-list-' + serial)
+            const numberWindow = document.getElementById('number-window-' + serial)
+
             const elHeight = list.offsetHeight
             const windowHeight = numberWindow.offsetHeight
             const diff = list.offsetHeight - numberWindow.offsetHeight
-            
+
+            // 滚动速度
+            let granularity = diff / (CYCLE_TIME*1000);
+            if(!run) {
+                granularity = diff / (SLOW_CYCLE*1000)
+            }
+
+            if(run) {
+                if(Math.abs(list.offsetTop) > diff) {
+                    const moveDiff = windowHeight - list.offsetTop - list.offsetHeight
+                    setElementOffset(list, {y: 0})
+                    loopNumberList(list)
+                } else {
+                    const move = Math.floor(granularity * elapsed)
+                    const totalTop = -list.offsetTop + move
+                    setElementOffset(list, {y: totalTop})
+                }
+            } else {
+                if((parseInt(list.lastChild.innerHTML) !== stopAt)) {
+                    loopNumberList(list, stopAt)
+                }
+
+                if(Math.abs(list.offsetTop) < diff) {
+                    const move = Math.floor(granularity * elapsed)
+                    const totalTop = -list.offsetTop + move
+                    setElementOffset(list, {y: totalTop})
+                } else {
+                    stopFlag[serial] = true
+                }
+            }
+
+        }
+
+        function startAnimation() {
 
             let  previousTimeStamp;
 
@@ -117,35 +196,20 @@
 
                 if(previousTimeStamp !== timestamp) {
                     const elapsed = timestamp - previousTimeStamp;
-                    let granularity = diff / (CYCLE_TIME*1000);
-                    if(!run) {
-                        granularity = diff / (SLOW_CYCLE*1000)
-                    }
-                    if(Math.abs(list.offsetTop) > diff) {
-                        console.log('run:', Math.abs(list.offsetTop) - diff)
-                        if(run) {
-                            const moveDiff = windowHeight - list.offsetTop - list.offsetHeight
-                            setElementOffset(list, {y: 0})
-                            loopNumberList()
-                        }
-                        
-                    } else {
-                        const move = Math.floor(granularity * elapsed)
-                        const totalTop = -list.offsetTop + move
-                        console.log('move:', totalTop)
-                        setElementOffset(list, {y: totalTop})
-                    }
 
-                    
+                    rollup(1, lotteryNumber_1, elapsed)
+                    rollup(2, lotteryNumber_2, elapsed)
+                    rollup(3, lotteryNumber_3, elapsed)
+
                 }
 
                 previousTimeStamp = timestamp
 
-                if(run || (!run && Math.abs(list.offsetTop) < diff)) {
+                if(stopFlag.every(i => !!i)) {
                     animation = window.requestAnimationFrame(step)
                 }
-            
             }
+
             animation = window.requestAnimationFrame(step)
         }
         
