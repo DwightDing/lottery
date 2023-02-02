@@ -20,50 +20,55 @@
     <div class="container">
         <img class="boy" src="./img/IMG_6236.PNG" />
         <div class="number" id="number">
-            <!-- <div class="singlenumber">接</div>
-            <div class="singlenumber">好</div>
-            <div class="singlenumber">运</div> -->
-            <div class="singlenumber">
-                <div class="number-window" id="number-window-1">
-                    <div class="number-list" id="number-list-1">
-                        <div class="num">0</div>
-                        <div class="num">1</div>
-                        <div class="num">2</div>
-                        <div class="num">3</div>
-                        <div class="num">5</div>
+            <div id="initial" class="number-container">
+                <div class="singlenumber">接</div>
+                <div class="singlenumber">好</div>
+                <div class="singlenumber">运</div>
+            </div>
+            <div id="lottery" style="display: none;" class="number-container">
+                <div class="singlenumber">
+                    <div class="number-window" id="number-window-1">
+                        <div class="number-list" id="number-list-1">
+                            <div class="num">0</div>
+                            <div class="num">1</div>
+                            <div class="num">2</div>
+                            <div class="num">3</div>
+                            <div class="num">5</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="singlenumber">
+                    <div class="number-window" id="number-window-2">
+                        <div class="number-list" id="number-list-2">
+                            <div class="num">0</div>
+                            <div class="num">1</div>
+                            <div class="num">2</div>
+                            <div class="num">3</div>
+                            <div class="num">5</div>
+                            <div class="num">6</div>
+                            <div class="num">7</div>
+                            <div class="num">8</div>
+                            <div class="num">9</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="singlenumber">
+                    <div class="number-window" id="number-window-3">
+                        <div class="number-list" id="number-list-3">
+                            <div class="num">0</div>
+                            <div class="num">1</div>
+                            <div class="num">2</div>
+                            <div class="num">3</div>
+                            <div class="num">5</div>
+                            <div class="num">6</div>
+                            <div class="num">7</div>
+                            <div class="num">8</div>
+                            <div class="num">9</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="singlenumber">
-                <div class="number-window" id="number-window-2">
-                    <div class="number-list" id="number-list-2">
-                        <div class="num">0</div>
-                        <div class="num">1</div>
-                        <div class="num">2</div>
-                        <div class="num">3</div>
-                        <div class="num">5</div>
-                        <div class="num">6</div>
-                        <div class="num">7</div>
-                        <div class="num">8</div>
-                        <div class="num">9</div>
-                    </div>
-                </div>
-            </div>
-            <div class="singlenumber">
-                <div class="number-window" id="number-window-3">
-                    <div class="number-list" id="number-list-3">
-                        <div class="num">0</div>
-                        <div class="num">1</div>
-                        <div class="num">2</div>
-                        <div class="num">3</div>
-                        <div class="num">5</div>
-                        <div class="num">6</div>
-                        <div class="num">7</div>
-                        <div class="num">8</div>
-                        <div class="num">9</div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
         <img class="girl" src="./img/IMG_6237.PNG" />
     </div>
@@ -79,73 +84,69 @@
         function onLoad() {
             const container = document.getElementById('container')
             container.addEventListener('mousedown', onMouseDown)
-            // load 接好运 三个字
         }
         function onUnload() {
             const container = document.getElementById('container')
             container.removeEventListener('mousedown', onMouseDown)
         }
 
-        
+
+        /**
+         * 滚动速度 可调, 滚完一个周期的时间，时间越短速度越快
+        */
+        const CYCLE_TIME = 0.5 // 一般滚动  0.5s
+        const SLOW_CYCLE = 2  // 点击停止后的缓冲  2s
 
 
-        let run = false // 动画是否开始
+        let run = false 
         let animation = null
 
+        let lotteryNumber_1 = 0
+        let lotteryNumber_2 = 0
+        let lotteryNumber_3 = 0
+
+        let stopFlag = new Array(0).fill(false)
         function onMouseDown() {
-            // console.log('mouse down', run)
+            const initial = document.getElementById('initial')
+            const lottery = document.getElementById('lottery')
+
+            initial.style.display = 'none'
+            lottery.style.display = 'flex'
+
             run = !run
 
             if(run) {
+                if(animation) {
+                    cancelAnimationFrame(animation)
+                }
+                stopFlag = new Array(0).fill(false)
+                curIndex = parseInt((Math.random() * numberArr.length * 100) % numberArr.length);
+                let curNum = numberArr[curIndex];
+                const str = curNum.toString().split('').map(i => parseInt(i))
+                lotteryNumber_1 = str[0]
+                lotteryNumber_2 = str[1]
+                lotteryNumber_3 = str[2]
                 startAnimation()
+            } else {
+                let data = JSON.parse(localStorage.getItem("luckynum"));
+                if (data == null) {
+                    data = [];
+                }
+                data.push(numberArr[curIndex]);
+                idle = true;
+                numberArr.splice(curIndex, 1);
+                localStorage.setItem("luckynum", JSON.stringify(data));
+                showlist();
+                animation = null
             }
 
             
         }
 
-        function buildNumberListDomByArray(array) {
-            return array.reduce((prev, current) => {
-                return prev + ('<div class="num">' + current + '</div>')
-            }, '')
-        }
 
-        function reverseList(array) {
-            const cloneArray = [...array]
-            const last = cloneArray.pop()
-            const reversed = [last, ...cloneArray]
-            return reversed
-        }
-
-        function loopNumberList(el, last) {
-            const listNodes = el.children
-            const currentListArray = []
-            for(let i = 0; i < listNodes.length; i++) {
-                currentListArray.push(parseInt(listNodes.item(i).innerHTML))
-            }
-
-            let newArray
-            if(last !== undefined) {
-                let reversed = reverseList(currentListArray)
-                while((tmp = reversed.pop()) !== last) {
-                    resersed = reverseList([...reversed, tmp])
-                }
-                newArray = [...reversed, tmp]
-            } else {
-                newArray = reverseList(currentListArray)
-            }
-            el.innerHTML = buildNumberListDomByArray(newArray)
-        }
-
-        const CYCLE_TIME = 0.5 // 0.5s滚完一个周期
-        const SLOW_CYCLE = 2
-
-        const lotteryNumber_1 = 3
-        const lotteryNumber_2 = 6
-        const lotteryNumber_3 = 5
-
-        const stopFlag = new Array(0).fill(false)
 
         function rollup(serial, stopAt, elapsed) {  // serial = 1,2,3  elapsed 时间差  stopAt 最后停在哪个数字
+            
             const list = document.getElementById('number-list-' + serial)
             const numberWindow = document.getElementById('number-window-' + serial)
 
@@ -186,7 +187,6 @@
         }
 
         function startAnimation() {
-
             let  previousTimeStamp;
 
             function step(timestamp) {
@@ -212,6 +212,37 @@
 
             animation = window.requestAnimationFrame(step)
         }
+
+        function buildNumberListDomByArray(array) {
+            return array.reduce((prev, current) => {
+                return prev + ('<div class="num">' + current + '</div>')
+            }, '')
+        }
+
+        function reverseList(array) {
+            const cloneArray = [...array]
+            const last = cloneArray.pop()
+            const reversed = [last, ...cloneArray]
+            return reversed
+        }
+
+        function loopNumberList(el, last) {
+            const listNodes = el.children
+            const currentListArray = []
+            for(let i = 0; i < listNodes.length; i++) {
+                currentListArray.push(parseInt(listNodes.item(i).innerHTML))
+            }
+
+            let newArray
+            if(last !== undefined) {
+                const index = currentListArray.findIndex(n => n === last)
+                const left = currentListArray.splice(0, index+1)
+                newArray = [...currentListArray, ...left]
+            } else {
+                newArray = reverseList(currentListArray)
+            }
+            el.innerHTML = buildNumberListDomByArray(newArray)
+        }
         
 
         showlist()
@@ -226,9 +257,6 @@
             });
             document.getElementById('list').innerHTML = innerHtml;
         }
-
-        
-
 
 
         
